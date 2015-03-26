@@ -331,36 +331,16 @@ class acf_field_reusable_field_group extends acf_field {
         ?>
         <style type="text/css">
 
-        .acf-field-list .field_type-reusable_field_group tr[data-name="name"],
-        .acf-field-list .field_type-reusable_field_group tr[data-name="instructions"],
-        .acf-field-list .field_type-reusable_field_group tr[data-name="required"],
-        .acf-field-list .field_type-reusable_field_group tr[data-name="warning"] {
+        .acf-field-list .acf-field-object-reusable-field-group tr[data-name="instructions"],
+        .acf-field-list .acf-field-object-reusable-field-group tr[data-name="required"],
+        .acf-field-list .acf-field-object-reusable-field-group tr[data-name="warning"],
+        .acf-field-list .acf-field-object-reusable-field_group tr[data-name="instructions"],
+        .acf-field-list .acf-field-object-reusable-field_group tr[data-name="required"],
+        .acf-field-list .acf-field-object-reusable-field_group tr[data-name="warning"] {
             display: none !important;
         }
 
         </style>
-        <script type="text/javascript">
-            acf.add_action('change_field_type', function( $el ){
-                var type    = $el.attr('data-type');
-
-                //  Remove field name
-                if ( type == 'reusable_field_group' ) {
-                    $el.find('tr[data-name="name"] input').val('').trigger('keyup');
-                }
-            });
-
-            acf.add_action('change_field_label', function( $el ){
-                var $label = $el.find('tr[data-name="label"]:first input'),
-                    $name  = $el.find('tr[data-name="name"]:first input'),
-                    type   = $el.attr('data-type');
-
-                if ( type == 'reusable_field_group' ) {
-                    $name.val('').trigger('change');
-                    $el.find('> .field-info .li-field_name').text('');
-                    return;
-                }
-            });
-        </script>
             <?php
     }
 
