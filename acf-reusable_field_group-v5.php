@@ -378,7 +378,7 @@ class acf_field_reusable_field_group extends acf_field {
 
             // load value
             if( $sub_field['value'] === null ) {
-                $sub_field['value'] = acf_get_value( $post_id, $sub_field );
+                $sub_field['value'] = acf_format_value(acf_get_value( $post_id, $sub_field ), $post_id, $sub_field);
             }
 
             $fields[$sub_field_name] = $sub_field['value'];
