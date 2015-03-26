@@ -58,7 +58,7 @@ class acf_field_reusable_field_group extends acf_field {
             'error' => __('Error! Please select a field group', 'acf-reusable_field_group'),
         );
 
-        add_filter("acf/get_field_types",                               array($this, 'get_field_types'), 10, 1);
+        add_filter("acf/get_field_types", array($this, 'get_field_types'), 10, 1);
 
 
         // do not delete!
@@ -147,10 +147,30 @@ class acf_field_reusable_field_group extends acf_field {
             $current_id = "options";
         }
 
-        $group  = _acf_get_field_group_by_key($field["group_key"]);
-        $fields = acf_get_fields($group);
+        $name_prefix = '';
+        if (isset($field['parent'])) {
+            $name_prefix = preg_replace('/acf/', '', $field['prefix']);
+            $name_prefix = preg_replace('/\[' . $field['parent'] . '\]/', '', $name_prefix);
+            $name_prefix = preg_replace('/\[(\d)\]/', 'sections_$1_', $name_prefix);
+        }
 
-        acf_render_fields($current_id, $fields);
+        foreach( $field['sub_fields'] as $sub_field ) {
+
+            $sub_field_name = $sub_field['name'];
+
+            // update prefix to allow for nested values
+            $sub_field['prefix'] = $field["name"];
+
+            $sub_field['name'] = "{$name_prefix}{$field['_name']}_{$sub_field_name}";
+
+            // load value
+            if( $sub_field['value'] === null ) {
+                $sub_field['value'] = acf_get_value( $current_id, $sub_field );
+            }
+
+            // render input
+            acf_render_field_wrap( $sub_field );
+        }
     }
 
 
@@ -362,15 +382,33 @@ class acf_field_reusable_field_group extends acf_field {
     *  @return  $value
     */
 
-    /*
+
 
     function load_value( $value, $post_id, $field ) {
+        $fields = array();
 
-        return $value;
+        foreach( $field['sub_fields'] as $sub_field ) {
+
+            $sub_field_name = $sub_field['name'];
+
+            // update prefix to allow for nested values
+            $sub_field['prefix'] = $field["name"];
+
+            $sub_field['name'] = "{$field['name']}_{$sub_field_name}";
+
+            // load value
+            if( $sub_field['value'] === null ) {
+                $sub_field['value'] = acf_get_value( $post_id, $sub_field );
+            }
+
+            $fields[$sub_field_name] = $sub_field['value'];
+        }
+
+        return $fields;
 
     }
 
-    */
+
 
 
     /*
@@ -389,13 +427,28 @@ class acf_field_reusable_field_group extends acf_field {
     */
 
 
-    /*
+
     function update_value( $value, $post_id, $field ) {
+        if (! empty($value)) {
+            foreach ($value as $field_key => $field_value) {
+                foreach ( $field['sub_fields'] as $sub_field ) {
+                    if ($field_key == $sub_field['key']) {
+                        // update field
+                        $sub_field_name = $sub_field['name'];
 
-        return $value;
+                        $sub_field['name'] = "{$field['name']}_{$sub_field_name}";
 
+                        acf_update_value( $field_value, $post_id, $sub_field );
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
-    */
+
 
 
     /*
@@ -525,15 +578,19 @@ class acf_field_reusable_field_group extends acf_field {
     *  @return  $field
     */
 
-    /*
+
 
     function load_field( $field ) {
+
+        $group  = _acf_get_field_group_by_key($field["group_key"]);
+        $fields = acf_get_fields($group);
+        $field['sub_fields'] = $fields;
 
         return $field;
 
     }
 
-    */
+
 
 
     /*
@@ -549,15 +606,18 @@ class acf_field_reusable_field_group extends acf_field {
     *  @return  $field
     */
 
-    /*
+
 
     function update_field( $field ) {
+
+        // remove sub fields
+        unset($field['sub_fields']);
 
         return $field;
 
     }
 
-    */
+
 
 
     /*
@@ -573,15 +633,24 @@ class acf_field_reusable_field_group extends acf_field {
     *  @return  n/a
     */
 
-    /*
+
 
     function delete_field( $field ) {
 
+        // loop through sub fields
+        if( !empty($field['sub_fields']) ) {
 
+            foreach( $field['sub_fields'] as $sub_field ) {
+
+                acf_delete_field( $sub_field['ID'] );
+
+            }
+
+        }
 
     }
 
-    */
+
 
 
 }
