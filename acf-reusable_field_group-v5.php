@@ -59,6 +59,7 @@ class acf_field_reusable_field_group extends acf_field {
         );
 
         add_filter("acf/get_field_types", array($this, 'get_field_types'), 10, 1);
+        add_filter("acf/prepare_field_for_export", array($this, 'prepare_fields_for_export'), 10, 1);
 
 
         // do not delete!
@@ -116,6 +117,15 @@ class acf_field_reusable_field_group extends acf_field {
         }
 
         return $r;
+    }
+
+
+    function prepare_fields_for_export( $field ) {
+        if ($field['type'] == $this->name) {
+            unset($field['sub_fields']);
+        }
+
+        return $field;
     }
 
 
