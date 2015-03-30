@@ -158,20 +158,37 @@ class acf_field_reusable_field_group extends acf_field {
         }
 
         $name_prefix = '';
+
         if (isset($field['parent'])) {
-            $name_prefix = preg_replace('/acf/', '', $field['prefix']);
-            $name_prefix = preg_replace('/\[' . $field['parent'] . '\]/', '', $name_prefix);
-            $name_prefix = preg_replace('/\[(\d)\]/', 'sections_$1_', $name_prefix);
+            preg_match_all('/\[(field_\w+)\](\[(\d)\])?/', $field['prefix'], $parent_fields);
+
+
+            if (isset($parent_fields[0])) {
+                foreach ($parent_fields[0] as $parent_field_index => $parent_field) {
+                    $field_name = $parent_fields[1][$parent_field_index];
+                    $index = $parent_fields[3][$parent_field_index];
+                    $parent_field_object = acf_get_field($field_name);
+                    $parent_prefix = $parent_field_object['name'];
+
+                    if ($index !== '') {
+                        $parent_prefix .= '_' . $index;
+                    }
+
+                    $name_prefix .= $parent_prefix . '_';
+                }
+            }
+
+            $name_prefix .= $field['_name'] . '_';
         }
 
-        foreach( $field['sub_fields'] as $sub_field ) {
-
+        foreach ( $field['sub_fields'] as $sub_field ) {
+            $sub_name_prefix = $name_prefix;
             $sub_field_name = $sub_field['name'];
 
             // update prefix to allow for nested values
             $sub_field['prefix'] = $field["name"];
 
-            $sub_field['name'] = "{$name_prefix}{$field['_name']}_{$sub_field_name}";
+            $sub_field['name'] = "{$name_prefix}{$sub_field_name}";
 
             // load value
             if( $sub_field['value'] === null ) {
