@@ -160,7 +160,7 @@ class acf_field_reusable_field_group extends acf_field {
         $name_prefix = '';
 
         if (isset($field['parent'])) {
-            preg_match_all('/\[(field_\w+)\](\[(\d)\])?/', $field['prefix'], $parent_fields);
+            preg_match_all('/\[(field_\w+)\](\[(\d+)\])?/', $field['prefix'], $parent_fields);
 
 
             if (isset($parent_fields[0])) {
