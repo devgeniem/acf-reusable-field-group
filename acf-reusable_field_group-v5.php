@@ -4,6 +4,7 @@ if( ! class_exists('acf_field_reusable_field_group') ) :
 
 class acf_field_reusable_field_group extends acf_field {
 
+    private $included;
 
     /*
     *  __construct
@@ -48,6 +49,11 @@ class acf_field_reusable_field_group extends acf_field {
             'group_key' => 0,
         );
 
+        /*
+        *  a fake boolean (uses strings for easeness) for knowing if we are included somewhere or not
+        */
+        
+        $this->included = "false";
 
         /*
         *  l10n (array) Array of strings that are used in JavaScript. This allows JS strings to be translated in PHP and loaded via:
@@ -60,6 +66,13 @@ class acf_field_reusable_field_group extends acf_field {
 
         add_filter("acf/get_field_types", array($this, 'get_field_types'), 10, 1);
         add_filter("acf/prepare_field_for_export", array($this, 'prepare_fields_for_export'), 10, 1);
+
+        /*
+        *  Functions to create a location rule for included field groups
+        */
+        add_filter('acf/location/rule_types', array( $this, 'acf_location_rule_types_included_field_group'), 10, 1 );
+        add_filter('acf/location/rule_values/included', array( $this, 'acf_location_rule_values_included_field_group'), 10, 1 );
+        add_filter('acf/location/rule_match/included', array( $this, 'acf_location_rule_match_included_field_group'), 10, 3 );
 
 
         // do not delete!
@@ -158,6 +171,21 @@ class acf_field_reusable_field_group extends acf_field {
         }
 
         $name_prefix = '';
+
+        // Geniem addition: get field group to get the visibility settings
+        $field_group = get_page_by_path( $field["group_key"], null, "acf-field-group" );
+
+        $contents = unserialize( $field_group->post_content );
+
+        $contents["active"] = true;
+
+        // Geniem addition: set a session variable that we are including the field group
+        $this->included = "true";
+
+        // Geniem addition: check the visibility rules and return false if not visible
+        if ( ! acf_get_field_group_visibility( $contents ) ) {
+            return false;
+        }
 
         if (isset($field['parent'])) {
             preg_match_all('/\[(field_\w+)\](\[(\d+)\])?/', $field['prefix'], $parent_fields);
@@ -657,7 +685,77 @@ class acf_field_reusable_field_group extends acf_field {
 
     }
 
+    /*
+    *  acf_location_rule_types_included_field_group()
+    *
+    *  This action creates a new location rule for included field groups
+    *  Function added by Geniem
+    *
+    *  @type    action
+    *  @date    23/09/2015
+    *  @since   5.0.0
+    *
+    *  @param   $choices (array) the array holding the location rules
+    *  @return  n/a
+    */
 
+    function acf_location_rule_types_included_field_group( $choices ) {
+        $choices['Other']['included'] = 'Included field';
+
+        return $choices;
+    }
+
+    /*
+    *  acf_location_rule_values_included_field_group()
+    *
+    *  This action adds the choices to location rule menu
+    *  Function added by Geniem
+    *
+    *  @type    action
+    *  @date    23/09/2015
+    *  @since   5.0.0
+    *
+    *  @param   $choices (array) the array holding the choices
+    *  @return  n/a
+    */
+
+    function acf_location_rule_values_included_field_group( $choices ) {
+        $choices["true"] = "true";
+        $choices["false"] = "false";
+
+        return $choices;
+    }
+
+    /*
+    *  acf_location_rule_match_included_field_group()
+    *
+    *  This action checks if the location rule matches to current field groups
+    *  Function added by Geniem
+    *
+    *  @type    action
+    *  @date    23/09/2015
+    *  @since   5.0.0
+    *
+    *  @param   $choices (array) the array holding the choices
+    *  @return  n/a
+    */    
+
+    function acf_location_rule_match_included_field_group( $match, $rule, $options ) {
+        global $group;
+
+        $included = $this->included;
+
+        if ( $rule["value"] == $included ) {
+            $this->included = "false";
+            $return = true;
+        }
+        else {
+            $this->included = "false";
+            $return = false;
+        }
+
+        return $return;
+    }
 
 
 }
