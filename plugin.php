@@ -22,5 +22,3 @@ function include_field_types_reusable_field_group( $version ) {
 }
 
 add_action('acf/include_field_types', 'include_field_types_reusable_field_group');  
-    
-?>

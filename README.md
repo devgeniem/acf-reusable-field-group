@@ -14,6 +14,8 @@ This plugin adds a Reusable Field Group for use with Advanced Custom Fields Worl
 
 It also adds a new location rule for the field groups that allows the group to be visible only when it is included into another group.
 
+This plugin is originally developed by GitHub user tybruffy. This fork is created because of the lack of very needed If included location rule in the original version.
+
 ## Install
 
 Recommended installation to a WordPress project is through composer:

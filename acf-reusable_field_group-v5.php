@@ -507,5 +507,3 @@ class acf_field_reusable_field_group extends acf_field {
 new acf_field_reusable_field_group();
 
 endif;
-
-?>
