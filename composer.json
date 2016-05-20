@@ -1,5 +1,17 @@
 {
-    "name": "mvpdesign/acf-reusable-field-group",
-    "description": "ACF Reusable Field Group",
-    "type": "wordpress-plugin"
+  "name": "devgeniem/acf-reusable-field-group",
+  "type": "wordpress-plugin",
+  "license": "GPLv2",
+  "description": "A WordPress and an Advanced Custom Fields plugin that adds a Reusable Field Group to the ACF. The field allows the developer to include a field group within another field group.",
+  "authors": [
+    {
+      "name": "Miika Arponen",
+      "email": "miika.arponen@geniem.com",
+      "homepage" : "https://github.com/Nomafin"
+    }
+  ],
+  "require": {
+    "php": ">=5.6",
+    "composer/installers": "v1.0.12"
+  }
 }

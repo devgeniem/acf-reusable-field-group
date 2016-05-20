@@ -1,7 +1,22 @@
-# ACF Reusable Field Group 1.0.2
+![geniem-github-banner](https://cloud.githubusercontent.com/assets/5691777/14319886/9ae46166-fc1b-11e5-9630-d60aa3dc4f9e.png)
 
-This is a plugin which adds a Reusable Field Group type to the Advanced Custom Fields WordPress Plugins.  This allows you to create a group of fields once, and reuse it within any other field group.
+# ACF Reusable Field Group 1.1.0
+Contributors: devgeniem, tybruffy
+Tags: acf, wordpress
+Requires at least: 5.0.0.0
+Tested up to: 5.3.8.1
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-This plugins was created using the [Advanced Custom Fields field type template repository](https://github.com/elliotcondon/acf-field-type-template).  As such, there is a bunch of boilerplate code that is not currently used.
+## Description
 
-For more information about that process a new field type, please read [this article](http://www.advancedcustomfields.com/resources/tutorials/creating-a-new-field-type/).
+This plugin adds a Reusable Field Group for use with Advanced Custom Fields WorldPress plugin. The field allows the developer to include a field group within another field group.
+
+It also adds a new location rule for the field groups that allows the group to be visible only when it is included into another group.
+
+## Install
+
+Recommended installation to a WordPress project is through composer:
+```
+$ composer require devgeniem/acf-reusable-field-group
+```
