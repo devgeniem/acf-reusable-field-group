@@ -135,6 +135,10 @@ class acf_field_reusable_field_group extends acf_field {
 
     function prepare_fields_for_export( $field ) {
         if ($field['type'] == $this->name) {
+            $field_object = acf_get_field( $field["key"] );
+
+            $field["group_key"] = $field_object["group_key"];
+
             unset($field['sub_fields']);
         }
 
@@ -185,7 +189,8 @@ class acf_field_reusable_field_group extends acf_field {
 
         $contents["active"] = true;
 
-        // Geniem addition: set a session variable that we are including the field group
+        // Geniem addition: set a variable that we are including the field group
+        // this variable will be checked in the visibility condition check
         $this->included = "true";
 
         // Geniem addition: check the visibility rules and return false if not visible
